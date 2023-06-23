@@ -1,0 +1,26 @@
+---
+
+stages:
+  - test
+  - deploy
+
+# Job to run tests
+test:
+  stage: test
+  script:
+    - apt-get update
+    - apt-get -y upgrade
+    - DEBIAN_FRONTEND=noninteractive apt-get install -yq libpq-dev gcc python3.8 python3-pip
+    - apt-get clean
+    - mkdir /sample-app
+    - cd /sample-app
+    - cp /ci-cd-tutorial-sample-app/* .
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements-server.txt
+    - flask db upgrade
+    - pytest
+# Job to deploy the application
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the application..."
